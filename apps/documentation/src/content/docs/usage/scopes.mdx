@@ -1,0 +1,140 @@
+---
+title: Scopes
+sidebar:
+  order: 3
+---
+
+invokey's Scopes feature lets you manage keyboard shortcuts by context. By grouping shortcuts into named contexts, you can enable or disable them based on the current UI state, preventing conflicts and improving user experience.
+
+## ScopeProvider Component
+
+The `ScopeProvider` component is the main way to manage scopes in your application. It wraps a section of your UI and defines which scopes are active within that section.
+
+### Basic Usage
+
+```svelte
+<script lang="ts">
+  import { ScopeProvider } from '@invokey/svelte'
+</script>
+
+<ScopeProvider activeScopes={['editor', 'grid']}>
+  <!-- Your app content -->
+</ScopeProvider>
+```
+
+### Props
+
+| Prop           | Type       | Default  | Description                                                |
+| -------------- | ---------- | -------- | ---------------------------------------------------------- |
+| `children`     | `Snippet`  | Required | Content to render within the scope context                 |
+| `activeScopes` | `string[]` | `['*']`  | Array of active scope names. `'*'` represents global scope |
+
+## Global Scope
+
+The `'*'` scope is special and represents the global scope. When this scope is active, all shortcuts will work regardless of their scope. By default, the global scope is always active.
+
+To disable the global scope, you need to explicitly set the scopes you want to be active:
+
+```svelte
+<ScopeProvider activeScopes={['editor']}>
+  <!-- Only editor shortcuts will work here -->
+</ScopeProvider>
+```
+
+## Examples
+
+### 1. Basic Scope Usage
+
+The simplest use case with a single scope:
+
+```svelte
+<script lang="ts">
+  import { ScopeProvider, Combination } from '@invokey/svelte'
+</script>
+
+<ScopeProvider activeScopes={['editor']}>
+  <Combination combinations="ctrl+s" scope="editor">
+    <span>Save document</span>
+  </Combination>
+</ScopeProvider>
+```
+
+### 2. Multiple Scopes
+
+Handle multiple active scopes:
+
+```svelte
+<script lang="ts">
+  import { ScopeProvider, Combination } from '@invokey/svelte'
+</script>
+
+<ScopeProvider activeScopes={['editor', 'grid']}>
+  <Combination combinations="ctrl+s" scope="editor">
+    <span>Save document</span>
+  </Combination>
+
+  <Combination combinations="ctrl+c" scope="grid">
+    <span>Copy selected cells</span>
+  </Combination>
+</ScopeProvider>
+```
+
+### 3. Global and Specific Scopes
+
+Mix global and specific scopes:
+
+```svelte
+<script lang="ts">
+  import { ScopeProvider, Combination } from '@invokey/svelte'
+</script>
+
+<ScopeProvider activeScopes={['*', 'editor']}>
+  <Combination combinations="ctrl+shift+p" scope="*">
+    <span>Command palette (works everywhere)</span>
+  </Combination>
+
+  <Combination combinations="ctrl+s" scope="editor">
+    <span>Save document (works in editor)</span>
+  </Combination>
+</ScopeProvider>
+```
+
+### 4. Dynamic Scopes
+
+Change active scopes based on application state:
+
+```svelte
+<script lang="ts">
+  import { ScopeProvider, Combination } from '@invokey/svelte'
+
+  let isEditing = $state(true);
+</script>
+
+<button on:click={() => (isEditing = !isEditing)}>
+  {`Go to ${isEditing ? 'View' : 'Edit'} mode`}
+</button>
+<ScopeProvider activeScopes={isEditing ? ['editor'] : ['viewer']}>
+  {#if isEditing}
+    <Combination combinations="ctrl+s" scope="editor">
+      <span>Changes saved</span>
+    </Combination>
+  {:else}
+    <Combination combinations="ctrl+s" scope="viewer">
+      <span>Preview saved</span>
+    </Combination>
+  {/if}
+</ScopeProvider>
+```
+
+## Best Practices
+
+1. **Use Descriptive Scope Names**: Choose clear, meaningful names for your scopes (e.g., 'editor', 'grid', 'preview').
+2. **Keep Global Scope Minimal**: Only put truly global shortcuts in the '\*' scope.
+3. **Consider User Context**: Group shortcuts logically based on user context and workflow.
+4. **Document Scope Hierarchy**: Make sure your scope hierarchy is well-documented for other developers.
+5. **Handle Scope Transitions**: Consider what happens to shortcuts during scope transitions.
+6. **Test Scope Isolation**: Ensure shortcuts don't leak between scopes unintentionally.
+7. **Use Consistent Naming**: Follow a consistent naming convention for your scopes.
+8. **Consider Accessibility**: Make sure scope changes don't affect accessibility features.
+9. **Handle Edge Cases**: Consider what happens when multiple scopes are active.
+10. **Clean Up Resources**: Disable scopes when components are unmounted to prevent memory leaks.

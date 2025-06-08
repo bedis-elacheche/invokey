@@ -1,0 +1,32 @@
+{
+  "name": "invokey-monorepo",
+  "version": "1.0.0",
+  "description": "A library to handle keyboard shortcuts",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "keywords": [
+    "invokey",
+    "hotkey",
+    "shortcut",
+    "keyboard",
+    "shortcuts",
+    "keypress",
+    "hotkeys",
+    "sequence",
+    "combination"
+  ],
+  "author": "",
+  "license": "ISC",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "scripts": {
+    "docs:dev": "cd apps/documentation && npm run dev",
+    "docs:build": "cd apps/documentation && npm run build",
+    "docs:serve": "cd apps/documentation && npm run serve"
+  }
+}

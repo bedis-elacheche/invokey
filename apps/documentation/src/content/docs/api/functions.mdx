@@ -1,0 +1,101 @@
+---
+title: Functions
+sidebar:
+  order: 2
+---
+
+The invokey API provides a set of functions and hooks for managing keyboard shortcuts in your application. It includes support for both combination shortcuts (like `Ctrl+C`) and sequence shortcuts (like `g g`), along with a scope system for organizing and controlling shortcut groups. The API is designed to be flexible and easy to use, with TypeScript support for better development experience.
+
+## Functions
+
+### useCombination
+
+```typescript
+function useCombination(
+  combinations: string | string[],
+  handler: CombinationHandler,
+  options?: CombinationOptions
+): void;
+```
+
+Custom hook for handling keyboard combination shortcuts
+
+- `combinations` : The combination(s) to listen for
+- `handler` : The function to call when the combination is matched
+- `options` : Configuration options for the combination
+
+### useSequence
+
+```typescript
+function useSequence(
+  sequences: string | string[],
+  handler: SequenceHandler,
+  options?: SequenceOptions
+): void;
+```
+
+Custom hook for handling keyboard sequence
+
+- `sequences` : The sequence(s) to listen for
+- `handler` : The function to call when the sequence is matched
+- `options` : Configuration options for the sequence
+
+### Scope Management
+
+Functions for managing shortcut scopes.
+
+#### enableAllScopes
+
+```typescript
+function enableAllScopes(): void;
+```
+
+Enables all scopes
+
+#### disableAllScopes
+
+```typescript
+function disableAllScopes(): void;
+```
+
+Disables all scopes
+
+#### enableScope
+
+```typescript
+function enableScope(scope: string): void;
+```
+
+Enables a scope
+
+#### disableScope
+
+```typescript
+function disableScope(scope: string): void;
+```
+
+Disables a scope
+
+#### toggleScope
+
+```typescript
+function toggleScope(scope: string): void;
+```
+
+Toggles a scope
+
+#### getActiveScopes
+
+```typescript
+function getActiveScopes(): string[];
+```
+
+Gets the active scopes
+
+#### getScopes
+
+```typescript
+function getScopes(): Record<string, boolean>;
+```
+
+Gets the scopes list and their statuses

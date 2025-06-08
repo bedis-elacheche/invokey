@@ -1,0 +1,265 @@
+---
+title: Sequence
+sidebar:
+  order: 2
+---
+
+The Sequence component and its associated hooks provide a powerful way to handle keyboard sequences in your Svelte applications. This feature allows you to create complex keyboard sequences and trigger actions based on a series of key presses.
+
+The sequence system consists of two main parts:
+
+- `Sequence` component: A declarative way to handle keyboard sequences
+- `useSequence` hook: A lower-level hook for custom sequence handling
+
+## Sequence Component
+
+The `Sequence` component provides a simple way to show/hide content based on keyboard sequences.
+
+### Basic Usage
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+</script>
+
+<Sequence sequences="i>n>v>o>k>e>y">
+  <div>Got invoked!</div>
+</Sequence>
+```
+
+### Props
+
+| Prop                        | Type                        | Default  | Description                                              |
+| --------------------------- | --------------------------- | -------- | -------------------------------------------------------- |
+| `sequences`                 | `string \| string[]`        | Required | The keyboard sequence(s) to detect                       |
+| `children`                  | `Snippet`                   | -        | Content to render when sequence is detected              |
+| `activeSequence`            | `Snippet<[string \| null]>` | -        | Snippet to render content with active sequence info      |
+| `hideAfter`                 | `number`                    | 0        | Time in ms after which to hide content (0 = never hide)  |
+| `seperator`                 | `string`                    | `>`      | Character used to separate keys in sequences             |
+| `ref`                       | `HTMLElement \| Window`     | `window` | Target element to listen for keyboard events             |
+| `preventDefault`            | `Enabled`                   | `true`   | Whether to prevent default browser behavior              |
+| `enabled`                   | `Enabled`                   | `true`   | Whether the sequence detection is enabled                |
+| `disabledOnTags`            | `string[]`                  | `[]`     | List of HTML tags where shortcuts should be disabled     |
+| `disabledOnFormTags`        | `boolean`                   | `false`  | Whether to disable shortcuts on form elements            |
+| `disabledOnContentEditable` | `boolean`                   | `false`  | Whether to disable shortcuts on contentEditable elements |
+| `scope`                     | `string`                    | `*`      | The scope this shortcut belongs to                       |
+| `timeout`                   | `number`                    | `1000`   | Maximum time (ms) allowed between key presses            |
+| `ignoreModifiers`           | `boolean`                   | `false`  | Whether to ignore modifier keys in the sequence          |
+
+## useSequence Hook
+
+For more control over sequence handling, you can use the `useSequence` hook directly.
+
+### Basic Usage
+
+```svelte
+<script lang="ts">
+  import { useSequence } from '@invokey/svelte'
+
+  useSequence(
+    "i>n>v>o>k>e>y",
+    (event, sequence) => {
+      console.log('Sequence matched:', sequence)
+    }
+  )
+</script>
+```
+
+### Hook Parameters
+
+| Parameter   | Type                                               | Description                              |
+| ----------- | -------------------------------------------------- | ---------------------------------------- |
+| `sequences` | `string \| string[]`                               | The sequence(s) to listen for            |
+| `handler`   | `(event: KeyboardEvent, sequence: string) => void` | Function called when sequence is matched |
+| `options`   | `SequenceOptions`                                  | Optional configuration                   |
+
+### Options
+
+The hook accepts the same options as the component, with additional sequence-specific options:
+
+| Prop                        | Type                    | Default  | Description                                              |
+| --------------------------- | ----------------------- | -------- | -------------------------------------------------------- |
+| `seperator`                 | `string`                | `>`      | Character used to separate keys in sequences             |
+| `ref`                       | `HTMLElement \| Window` | `window` | Target element to listen for keyboard events             |
+| `preventDefault`            | `Enabled`               | `true`   | Whether to prevent default browser behavior              |
+| `enabled`                   | `Enabled`               | `true`   | Whether the sequence detection is enabled                |
+| `disabledOnTags`            | `string[]`              | `[]`     | List of HTML tags where shortcuts should be disabled     |
+| `disabledOnFormTags`        | `boolean`               | `false`  | Whether to disable shortcuts on form elements            |
+| `disabledOnContentEditable` | `boolean`               | `false`  | Whether to disable shortcuts on contentEditable elements |
+| `scope`                     | `string`                | `*`      | The scope this shortcut belongs to                       |
+| `timeout`                   | `number`                | `1000`   | Maximum time (ms) allowed between key presses            |
+| `ignoreModifiers`           | `boolean`               | `false`  | Whether to ignore modifier keys in the sequence          |
+
+## Sequence Format
+
+Sequences are specified as strings with keys separated by the separator character (default: `>`). For example:
+
+- `i>n>v>o>k>e>y`
+- `s>v>e>l>t>e`
+
+### Supported Keys
+
+- Letter keys: `'a'`, `'b'`, etc.
+- Number keys: `'1'`, `'2'`, etc.
+- Special keys: `'space'`, `'enter'`, `'escape'`, etc.
+- Modifier keys (if not ignored): `'ctrl'`, `'alt'`, `'shift'`, `'meta'`
+
+## Examples
+
+### 1. Basic Single Sequence
+
+The simplest use case with a single keyboard sequence:
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+</script>
+
+<Sequence sequences="i>n>v>o>k>e>y">
+  <span>Content shown when sequence is entered</span>
+</Sequence>
+```
+
+### 2. Multiple Sequences
+
+Handle multiple keyboard sequences with the same content:
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+</script>
+
+<Sequence sequences={["i>n>v>o>k>e>y", 's>v>e>l>t>e']}>
+  {#snippet activeSequence(sequence)}
+    {#if sequence}
+      <span>Active sequence: {sequence}</span>
+    {/if}
+  {/snippet}
+</Sequence>
+```
+
+### 3. Auto-hiding Content
+
+Show content temporarily after a sequence is entered:
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+</script>
+
+<Sequence
+  sequences="i>n>v>o>k>e>y"
+  hideAfter={2000}
+>
+  <span>Content that disappears after 2 seconds</span>
+</Sequence>
+```
+
+### 4. Custom Timeout
+
+Adjust the maximum time allowed between key presses:
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+</script>
+
+<Sequence
+  sequences="i>n>v>o>k>e>y"
+  timeout={2000}
+>
+  <span>Content shown when sequence is entered within 2 seconds</span>
+</Sequence>
+```
+
+### 5. Ignoring Modifier Keys
+
+Create sequences that ignore modifier keys:
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+</script>
+
+<Sequence
+  sequences="i>n>v>o>k>e>y"
+  ignoreModifiers
+>
+  <span>Content shown when sequence is entered (ignoring modifiers)</span>
+</Sequence>
+```
+
+### 6. Custom Separator
+
+Use a different separator for sequences:
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+</script>
+
+<Sequence
+  sequences="i.n.v.o.k.e.y"
+  seperator="."
+>
+  <span>Content shown when sequence is entered with dot separator</span>
+</Sequence>
+```
+
+### 7. Custom Target Element
+
+Listen for sequences on a specific element:
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+
+  let gameArea: HTMLElement | null = $state(null)
+</script>
+
+<div bind:this={gameArea} tabindex={-1}>
+  <label for="gameArea">Game Area</label>
+  <Sequence sequences="i>n>v>o>k>e>y" ref={gameArea}>
+    <span>Content shown when sequence is entered in game area</span>
+  </Sequence>
+</div>
+```
+
+### 8. Complex Sequence with Active State
+
+Show different content based on the active sequence:
+
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte'
+</script>
+
+<Sequence sequences={["i>n>v>o>k>e>y", "s>v>e>l>t>e"]}>
+  {#snippet activeSequence(sequence)}
+    <div class="sequence-complete">
+      <h2>Sequence Complete!</h2>
+      <p>You've entered the secret sequence!</p>
+      <div class="sequence-hint">
+        {#if sequence === "i>n>v>o>k>e>y"}
+          invokey Sequence Detected!
+        {:else}
+          Svelte Code Detected!
+        {/if}
+      </div>
+    </div>
+  {/snippet}
+</Sequence>
+```
+
+## Best Practices
+
+1. **Choose Appropriate Timeouts**: Set reasonable timeout values based on your sequence complexity and user expectations.
+2. **Consider User Experience**: Make sequences memorable and easy to enter.
+3. **Provide Visual Feedback**: Show progress or hints for longer sequences.
+4. **Document Sequences**: Make sure to document available sequences for your users.
+5. **Handle Edge Cases**: Consider what happens when users start typing sequences accidentally.
+6. **Test Across Devices**: Ensure your sequences work consistently across different input devices.
+7. **Use Appropriate Separators**: Choose separators that won't conflict with normal typing.
+8. **Consider Accessibility**: Provide alternative ways to access functionality beyond keyboard sequences.
+9. **Clean Up Resources**: Use the `enabled` prop to disable sequences when components are not in use.
+10. **Balance Complexity**: Keep sequences long enough to avoid accidental triggers but short enough to be memorable.

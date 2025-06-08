@@ -1,0 +1,88 @@
+---
+title: Components
+sidebar:
+  order: 1
+---
+
+The invokey API provides a set of components for managing keyboard shortcuts in your application. These components are designed to work seamlessly with the function-based API, offering a declarative way to handle keyboard interactions. The components are built with TypeScript support and follow Svelte's component patterns for optimal integration with your application.
+
+## Components
+
+### Combination
+
+```svelte
+<Combination
+  combinations={['ctrl+k', 'cmd+k']}
+  hideAfter={2000}
+>
+  <div>Search panel</div>
+</Combination>
+```
+
+A component that renders content based on keyboard combination detection.
+
+#### Props
+
+```typescript
+interface CombinationProps extends CombinationOptions {
+  /** Array of keyboard combinations to detect */
+  combinations: Parameters<typeof useCombination>[0];
+  /** Content to render when combination is detected */
+  children?: Snippet;
+  /** Function to render content with active combination info */
+  activeCombination?: Snippet<[activeCombination: string | null]>;
+  /** Time in ms after which to hide content (0 = never hide) */
+  hideAfter?: number;
+}
+```
+
+### Sequence
+
+```svelte
+<Sequence
+  sequences="i>n>v>o>k>e>y"
+  hideAfter={2000}
+>
+  <div>Got invoked!</div>
+</Sequence>
+```
+
+A component that renders content based on keyboard sequence detection.
+
+#### Props
+
+```typescript
+interface SequenceProps extends SequenceOptions {
+  /** Array of keyboard sequences to detect */
+  sequences: Parameters<typeof useSequence>[0];
+  /** Content to render when sequence is detected */
+  children?: Snippet;
+  /** Function to render content with active sequence info */
+  activeSequence?: Snippet<[activeSequence: string | null]>;
+  /** Time in ms after which to hide content (0 = never hide) */
+  hideAfter?: number;
+}
+```
+
+### ScopeProvider
+
+```svelte
+<ScopeProvider activeScopes={['scopeA', 'scopeB']}>
+  <!-- Your app content -->
+</ScopeProvider>
+```
+
+A component that provides keyboard shortcut scoping functionality.
+
+#### Props
+
+```typescript
+interface ScopeProviderProps {
+  /** Content to render within the scope context */
+  children: Snippet;
+  /** Array of active scope names. Defaults to ['*'] for global scope */
+  activeScopes?: string[];
+}
+```
+
+If you set the activeScopes prop, the wildcard scope will not be active by default. You would have to set `['scopeA', '*']`.

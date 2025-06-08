@@ -1,0 +1,302 @@
+---
+title: Combination
+sidebar:
+  order: 1
+---
+
+The Combination component and its associated hooks provide a powerful way to handle keyboard combinations in your Svelte applications. This feature allows you to create complex keyboard shortcuts and trigger actions based on multiple key presses.
+
+The combination system consists of two main parts:
+
+- `Combination` component: A declarative way to handle keyboard combinations
+- `useCombination` hook: A lower-level hook for custom combination handling
+
+## Combination Component
+
+The `Combination` component provides a simple way to show/hide content based on keyboard combinations.
+
+### Basic Usage
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<Combination combinations={['ctrl+k', 'meta+k']}>
+  <div>Search panel</div>
+</Combination>
+```
+
+### Props
+
+| Prop                        | Type                        | Default  | Description                                              |
+| --------------------------- | --------------------------- | -------- | -------------------------------------------------------- |
+| `combinations`              | `string \| string[]`        | Required | The keyboard combination(s) to detect                    |
+| `children`                  | `Snippet`                   | -        | Content to render when combination is detected           |
+| `activeCombination`         | `Snippet<[string \| null]>` | -        | Snippet to render content with active combination info   |
+| `hideAfter`                 | `number`                    | `0`      | Time in ms after which to hide content (0 = never hide)  |
+| `seperator`                 | `string`                    | `+`      | Character used to separate keys in combinations          |
+| `ref`                       | `HTMLElement \| Window`     | `window` | Target element to listen for keyboard events             |
+| `preventDefault`            | `Enabled`                   | `true`   | Whether to prevent default browser behavior              |
+| `enabled`                   | `Enabled`                   | `true`   | Whether the combination detection is enabled             |
+| `disabledOnTags`            | `string[]`                  | `[]`     | List of HTML tags where shortcuts should be disabled     |
+| `disabledOnFormTags`        | `boolean`                   | `false`  | Whether to disable shortcuts on form elements            |
+| `disabledOnContentEditable` | `boolean`                   | `false`  | Whether to disable shortcuts on contentEditable elements |
+| `scope`                     | `string`                    | `*`      | The scope this shortcut belongs to                       |
+
+## useCombination Hook
+
+For more control over combination handling, you can use the `useCombination` hook directly.
+
+### Basic Usage
+
+```svelte
+<script lang="ts">
+  import { useCombination } from '@invokey/svelte'
+
+  useCombination(
+    ['ctrl+k', 'meta+k'],
+    (event, shortcut) => {
+      console.log('Combination matched:', shortcut)
+    }
+  )
+</script>
+```
+
+### Hook Parameters
+
+| Parameter      | Type                                                  | Description                                 |
+| -------------- | ----------------------------------------------------- | ------------------------------------------- |
+| `combinations` | `string \| string[]`                                  | The combination(s) to listen for            |
+| `handler`      | `(event: KeyboardEvent, combination: string) => void` | Function called when combination is matched |
+| `options`      | `CombinationOptions`                                  | Optional configuration                      |
+
+### Options
+
+The hook accepts the same options as the component:
+
+| Prop                        | Type                    | Default  | Description                                              |
+| --------------------------- | ----------------------- | -------- | -------------------------------------------------------- |
+| `seperator`                 | `string`                | `+`      | Character used to separate keys in combinations          |
+| `ref`                       | `HTMLElement \| Window` | `window` | Target element to listen for keyboard events             |
+| `preventDefault`            | `Enabled`               | `true`   | Whether to prevent default browser behavior              |
+| `enabled`                   | `Enabled`               | `true`   | Whether the combination detection is enabled             |
+| `disabledOnTags`            | `string[]`              | `[]`     | List of HTML tags where shortcuts should be disabled     |
+| `disabledOnFormTags`        | `boolean`               | `false`  | Whether to disable shortcuts on form elements            |
+| `disabledOnContentEditable` | `boolean`               | `false`  | Whether to disable shortcuts on contentEditable elements |
+| `scope`                     | `string`                | `*`      | The scope this shortcut belongs to                       |
+
+## Combination Format
+
+Combinations are specified as strings with keys separated by the separator character (default: '+'). For example:
+
+- `'ctrl+k'`
+- `'meta+shift+s'`
+
+### Supported Keys
+
+- Letter keys: `'a'`, `'b'`, etc.
+- Number keys: `'1'`, `'2'`, etc.
+- Special keys: `'space'`, `'enter'`, `'escape'`, etc.
+- Modifier keys: `'ctrl'`, `'alt'`, `'shift'`, `'meta'`
+
+## Examples
+
+### 1. Basic Single Combination
+
+The simplest use case with a single keyboard combination:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<Combination combinations={['ctrl+a']}>
+  <span>Content shown when Ctrl+A is pressed</span>
+</Combination>
+```
+
+### 2. Multiple Combinations
+
+Handle multiple keyboard combinations with the same content:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<Combination combinations={['ctrl+a', 'ctrl+b']}>
+  {#snippet activeCombination(shortcut)}
+    {#if shortcut}
+      <span>Active shortcut: {shortcut}</span>
+    {/if}
+  {/snippet}
+</Combination>
+```
+
+### 3. Auto-hiding Content
+
+Show content temporarily after a combination is pressed:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<Combination
+  combinations={'ctrl+a'}
+  hideAfter={50}
+>
+  <span>Content that disappears after 50ms</span>
+</Combination>
+```
+
+### 4. Disabled State
+
+Temporarily disable combination detection:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<Combination
+  combinations={['ctrl+b']}
+  enabled={false}
+>
+  <span>Content won't show even if Ctrl+B is pressed</span>
+</Combination>
+```
+
+### 5. Custom Target Element
+
+Listen for combinations on a specific element instead of the window:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+
+  let leftPanel: HTMLElement | null = $state(null);
+	let righPanel: HTMLElement | null = $state(null);
+</script>
+
+<div bind:this={leftPanel} tabindex={-1}>
+  <label for="leftPanel">Left panel</label>
+  <Combination combinations={['ctrl+c']} ref={leftPanel}>
+    <span>Content shown when Ctrl+C is pressed within the left panel</span>
+  </Combination>
+</div>
+
+<div bind:this={righPanel} tabindex={-1}>
+  <label for="rightPanel">Right panel</label>
+  <Combination combinations={['ctrl+c']} ref={righPanel}>
+    <span>Content shown when Ctrl+C is pressed within the right panel</span>
+  </Combination>
+</div>
+```
+
+### 6. Custom Separator
+
+Use a different separator for combinations:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<Combination
+  combinations={['ctrl.a', 'meta.a']}
+  seperator="."
+>
+  <span>Content shown when Ctrl.A or Meta.A is pressed</span>
+</Combination>
+```
+
+### 7. Allow Default Behavior
+
+Prevent the component from stopping default browser behavior:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<Combination
+  combinations={['ctrl+s', 'meta+s']}
+  preventDefault={false}
+>
+  <span>Content shown when Ctrl+S is pressed (browser save dialog will also appear)</span>
+</Combination>
+```
+
+### 8. Complex Combination with Active State
+
+Show different content based on the active combination:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<Combination
+  combinations={['ctrl+shift+p', 'meta+shift+p']}
+  activeCombination={(shortcut) => (
+    <div class="command-palette">
+      <div class="shortcut-hint">
+        {#if shortcut === 'ctrl+shift+p'}
+          Windows/Linux Command Palette
+        {:else}
+          macOS Command Palette
+        {/if}
+      </div>
+      <input type="text" placeholder="Type a command..." />
+    </div>
+  )}
+>
+  <div class="command-palette">
+    <input type="text" placeholder="Type a command..." autofocus />
+    <div class="command-list">
+      <!-- Command list items -->
+    </div>
+  </div>
+</Combination>
+```
+
+### 9. Nested Combinations
+
+Handle combinations at different levels of your application:
+
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte'
+</script>
+
+<!-- Global combinations -->
+<Combination combinations={['ctrl+p', 'meta+p']}>
+  <div class="global-command-palette">Global Commands</div>
+</Combination>
+
+<!-- Editor-specific combinations -->
+<div class="editor">
+  <Combination combinations={['ctrl+s', 'meta+s']}>
+    <div class="save-indicator">Saving...</div>
+  </Combination>
+
+  <Combination combinations={['ctrl+z', 'meta+z']}>
+    <div class="undo-indicator">Undoing...</div>
+  </Combination>
+</div>
+```
+
+## Best Practices
+
+1. **Use Semantic Combinations**: Choose combinations that make sense for your application and follow platform conventions.
+2. **Consider Platform Differences**: Use both `ctrl` and `cmd` combinations for cross-platform support.
+3. **Avoid Conflicts**: Be mindful of existing browser shortcuts and other application shortcuts.
+4. **Provide Visual Feedback**: Always show some indication when a combination is active.
+5. **Document Shortcuts**: Make sure to document available shortcuts for your users.
+6. **Handle Edge Cases**: Consider what happens when multiple combinations are pressed simultaneously.
+7. **Test Across Platforms**: Ensure your combinations work consistently across different operating systems.
+8. **Use Appropriate Timeouts**: Set reasonable `hideAfter` values based on your use case.
+9. **Consider Accessibility**: Provide alternative ways to access functionality beyond keyboard shortcuts.
+10. **Clean Up Resources**: Use the `enabled` prop to disable combinations when components are not in use.

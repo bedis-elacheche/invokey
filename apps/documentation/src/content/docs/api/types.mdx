@@ -1,0 +1,84 @@
+---
+title: Types
+sidebar:
+  order: 3
+---
+
+This section documents the core types used throughout the invokey library. These types define the configuration options and interfaces that shape how keyboard shortcuts behave in your application. Understanding these types is essential for effectively implementing and customizing keyboard shortcuts to match your application's needs.
+
+## Types
+
+### Enabled
+
+```typescript
+type Enabled = boolean | ((event: KeyboardEvent) => boolean);
+```
+
+Type definition for enabling/disabling keyboard shortcuts. Can be a boolean or a function that takes a KeyboardEvent and returns a boolean.
+
+### Options
+
+```typescript
+type Options = {
+  seperator?: string;
+  ref?: HTMLElement | null;
+  preventDefault?: Enabled;
+  enabled?: Enabled;
+  disabledOnTags?: string[];
+  disabledOnFormTags?: boolean;
+  disabledOnContentEditable?: boolean;
+  scope?: string;
+};
+```
+
+Common configuration options for keyboard shortcuts.
+
+- `seperator`: Character used to separate keys in a sequence
+- `ref`: Reference to the DOM element to attach the keyboard listener to
+- `preventDefault`: Whether to prevent default browser behavior
+- `enabled`: Whether the shortcut is enabled
+- `disabledOnTags`: List of HTML tags where shortcuts should be disabled
+- `disabledOnFormTags`: Whether to disable shortcuts on form elements
+- `disabledOnContentEditable`: Whether to disable shortcuts on contentEditable elements
+- `scope`: The scope this shortcut belongs to
+
+### CombinationOptions
+
+```typescript
+type CombinationOptions = Options & {};
+```
+
+Configuration options for keyboard combination shortcuts. Extends the base Options type.
+
+### SequenceOptions
+
+```typescript
+type SequenceOptions = Options & {
+  timeout?: number;
+  ignoreModifiers?: boolean;
+};
+```
+
+Configuration options for keyboard sequence shortcuts. Extends the base Options type with additional sequence-specific options
+
+- `timeout`: Maximum time (in milliseconds) allowed between key presses in a sequence
+- `ignoreModifiers`: Whether to ignore modifier keys (Ctrl, Alt, Shift, Meta) in the sequence
+
+### CombinationHandler
+
+```typescript
+export type CombinationHandler = (
+  event: KeyboardEvent,
+  combination: string
+) => void;
+```
+
+Type definition for the handler function used in sequence shortcuts.
+
+### SequenceHandler
+
+```typescript
+export type SequenceHandler = (event: KeyboardEvent, sequence: string) => void;
+```
+
+Type definition for the handler function used in sequence shortcuts.

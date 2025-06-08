@@ -1,0 +1,104 @@
+---
+title: invokey
+description: A svelte library to handle keyboard shortcuts.
+template: splash
+hero:
+  tagline: A svelte library to handle keyboard shortcuts!
+  image:
+    dark: ../../assets/logo-dark.png
+    light: ../../assets/logo-light.png
+
+  actions:
+    - text: Getting started
+      link: /installation
+      icon: right-arrow
+    - text: Github
+      link: https://github.com/bedis-elacheche/invokey
+      icon: external
+      variant: minimal
+      attrs:
+        target: _blank
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+## Main features
+
+<CardGrid stagger>
+  <Card title="Easy to use" icon="rocket">
+    Use just one hook to bind your key combination to a component.
+```svelte
+<script lang="ts">
+  import { useCombination } from '@invokey/svelte';
+
+  useCombination(
+    ['ctrl+k', 'meta+k'],
+    (event, shortcut) => {
+      console.log('Combination matched:', shortcut);
+    });
+
+</script>
+```
+  </Card>
+  <Card title="Components support" icon="add-document">
+  Or use a the component variant to display content when key combination is matched
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte';
+</script>
+
+<Combination
+  combinations={['ctrl+a']}
+>
+  Content shown when Ctrl+A is pressed
+</Combination>
+```
+  </Card>
+  <Card title="Supports sequence code" icon="seti:plan">
+  Create complex keyboard sequences like Konami code or game combos with ease.
+```svelte
+<script lang="ts">
+  import { Sequence } from '@invokey/svelte';
+</script>
+
+<Sequence sequences="i>n>v>o>k>e>y">
+  Content shown when sequence is entered
+</Sequence>
+```
+```svelte
+<script lang="ts">
+  import { useSequence } from '@invokey/svelte';
+
+  useSequence(
+    "i>n>v>o>k>e>y",
+    () => {
+      console.log('Got invoked!');
+    });
+</script>
+```
+  </Card>
+  <Card title="Dynamically enable or disable bindings" icon="setting">
+You can enable and disable bindings during runtime.
+```svelte
+<script lang="ts">
+  import { Combination } from '@invokey/svelte';
+
+  let isEditing = $state(false);
+</script>
+
+<button on:click={() => (isEditing = !isEditing)}>
+  {`Go to ${isEditing ? 'View' : 'Edit'} mode`}
+</button>
+<Combination
+  combinations={['ctrl+s']}
+  enabled={isEditing}
+>
+  Content won't show even if Ctrl+S
+  is pressed out of edit mode
+</Combination>
+```
+  </Card>
+  <Card title="Read the docs" icon="open-book">
+    Learn more in [the Docs](/installation).
+  </Card>
+</CardGrid>

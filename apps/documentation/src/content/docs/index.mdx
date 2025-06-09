@@ -31,11 +31,11 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 <script lang="ts">
   import { useCombination } from '@invokey/svelte';
 
-  useCombination(
-    ['ctrl+k', 'meta+k'],
-    (event, shortcut) => {
-      console.log('Combination matched:', shortcut);
-    });
+useCombination(
+['ctrl+k', 'meta+k'],
+(event, shortcut) => {
+console.log('Combination matched:', shortcut);
+});
 
 </script>
 ```
@@ -69,11 +69,11 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 <script lang="ts">
   import { useSequence } from '@invokey/svelte';
 
-  useSequence(
-    "i>n>v>o>k>e>y",
-    () => {
-      console.log('Got invoked!');
-    });
+useSequence(
+"i>n>v>o>k>e>y",
+() => {
+console.log('Got invoked!');
+});
 </script>
 ```
   </Card>
@@ -83,7 +83,7 @@ You can enable and disable bindings during runtime.
 <script lang="ts">
   import { Combination } from '@invokey/svelte';
 
-  let isEditing = $state(false);
+let isEditing = $state(false);
 </script>
 
 <button on:click={() => (isEditing = !isEditing)}>
@@ -99,6 +99,6 @@ You can enable and disable bindings during runtime.
 ```
   </Card>
   <Card title="Read the docs" icon="open-book">
-    Learn more in [the Docs](/installation).
+    Learn more in [the Docs](/invokey/installation).
   </Card>
 </CardGrid>

@@ -18,7 +18,7 @@
     "combination"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
@@ -28,5 +28,10 @@
     "docs:dev": "cd apps/documentation && npm run dev",
     "docs:build": "cd apps/documentation && npm run build",
     "docs:serve": "cd apps/documentation && npm run serve"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bedis-elacheche/invokey"
+  },
+  "homepage": "https://bedis.elacheche.me/invokey"
 }

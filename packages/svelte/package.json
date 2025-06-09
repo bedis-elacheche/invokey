@@ -75,5 +75,11 @@
 		"hotkeys",
 		"sequence",
 		"combination"
-	]
+	],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bedis-elacheche/invokey"
+	},
+	"homepage": "https://bedis.elacheche.me/invokey"
 }

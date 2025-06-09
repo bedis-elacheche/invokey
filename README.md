@@ -50,7 +50,7 @@ npm install @invokey/svelte
 
 ## Documentation
 
-For detailed documentation, visit our [documentation site](/installation) which includes:
+For detailed documentation, visit our [documentation site](https://bedis.elacheche.me/invokey) which includes:
 
 - Installation guide
 - Usage examples
